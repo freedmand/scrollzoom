@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScrollZoom Demo</title>
+
+  <style>
+    canvas {
+      background: rgb(246, 251, 255);
+      margin-top: 20px;
+    }
+
+    .doc {
+      width: 100%;
+      height: 300px;
+      border: solid 1px gainsboro;
+      box-sizing: border-box;
+      position: relative;
+      overflow: scroll;
+    }
+
+    .doc::-webkit-scrollbar {
+      -webkit-appearance: none;
+    }
+
+    .doc::-webkit-scrollbar:vertical {
+      width: 11px;
+    }
+
+    .doc::-webkit-scrollbar:horizontal {
+      height: 11px;
+    }
+
+    .doc::-webkit-scrollbar-thumb {
+      border-radius: 8px;
+      border: 2px solid white; /* should match background, can't be transparent */
+      background-color: rgba(0, 0, 0, .5);
+    }
+
+
+    .page {
+      background: gainsboro;
+      position: absolute;
+    }
+
+    .bounds {
+      border: solid 1px red;
+      box-sizing: border-box;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="doc" id="doc">
+  </div>
+  
+  <canvas id="canvas"></canvas>
+
+  <script src="./bundle.js"></script>
+  <script>
+    const page = {
+      render({x, y, width, height}) {
+        const div = document.createElement('div');
+        div.className = 'page';
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+        return div;
+      },
+      update(div, {x, y, width, height}) {
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+      },
+      destroy() {
+      }
+    };
+
+    const bounds = {
+      render({x, y, width, height}) {
+        const div = document.createElement('div');
+        div.className = 'bounds';
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+        return div;
+      },
+      update(div, {x, y, width, height}) {
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+      },
+      destroy() {
+      }
+    };
+
+    const WIDTH = 2000;
+    const HEIGHT = 800;
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+    canvas.style.width = `${WIDTH / 4}px`;
+    canvas.style.height = `${HEIGHT / 4}px`;
+    scrollzoom(document.getElementById('doc'), {
+      debugCanvas: canvas,
+      components: [
+      {
+          x: 20, y: 20, width: 500, height: 500,
+          component: page
+        },
+        {
+          x: 30, y: 540, width: 100, height: 150,
+          component: page
+        },
+        {
+          x: 0, y: 0, width: WIDTH, height: HEIGHT,
+          component: bounds
+        },
+      ],
+      width: WIDTH,
+      height: HEIGHT,
+      minZoom: 0.5,
+      maxZoom: 20,
+    });
+  </script>
+</body>
+</html>
