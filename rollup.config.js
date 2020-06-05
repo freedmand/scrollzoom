@@ -13,7 +13,7 @@ export default {
   output: {
     file: 'public/bundle.js',
     format: 'umd',
-    name: 'scrollzoom',
+    name: 'ScrollZoom',
   },
   plugins: [
     // Resolve node modules

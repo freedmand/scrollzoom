@@ -3,7 +3,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.scrollzoom = factory());
+  (global = global || self, global.ScrollZoom = factory());
 }(this, (function () { 'use strict';
 
   // Utilities to wrap functions with additional functionality
@@ -701,12 +701,31 @@
     destroy() {
       this.bounds.destroy();
       this.events.destroy();
+
+      for (let i = 0; i < this.components.length; i++) {
+        const component = this.components[i];
+        this.destroyComponent(component);
+      }
     }
 
     resizeBounds(w, h) {
       this.transform.updateBounds([w, h]);
       this.events.updateBounds();
       this.transform.updateMatrix(this.transform.matrix);
+    }
+
+    destroyComponent(component) {
+      const id = component['id'];
+      const rendered = this.rendered[id];
+      if (rendered != null) {
+        const destroyFn = component['component']['destroy'];
+        if (destroyFn != null) {
+          destroyFn(rendered);
+        }
+        // Remove DOM node
+        rendered.remove();
+        delete this.rendered[id];
+      }
     }
 
     domCallback() {
@@ -716,6 +735,11 @@
         const scrollOrigin = this.transform.project([0, 0]);
         const topLeft = this.transform.project([component['x'], component['y']]);
         const bottomRight = this.transform.project([component['x'] + component['width'], component['y'] + component['height']]);
+
+        // Visibility check
+        const hidden = bottomRight[0] < 0 || topLeft[0] > this.bounds.width ||
+          bottomRight[1] < 0 || topLeft[1] > this.bounds.height;
+
         const position = {
           x: topLeft[0] - scrollOrigin[0],
           y: topLeft[1] - scrollOrigin[1],
@@ -723,15 +747,20 @@
           height: bottomRight[1] - topLeft[1],
         };
 
-        if (this.rendered[component['id']] == null) {
-          // Render
-          const elem = component['component']['render'](position);
-          this.rendered[component['id']] = elem;
-          this.element.children[0].appendChild(elem);
+        if (hidden) {
+          // Hide if already rendered
+          this.destroyComponent(component);
         } else {
-          // Update
-          const elem = this.rendered[component['id']];
-          component['component']['update'](elem, position);
+          if (this.rendered[component['id']] == null) {
+            // Render
+            const elem = component['component']['render'](position);
+            this.rendered[component['id']] = elem;
+            this.element.children[0].appendChild(elem);
+          } else {
+            // Update
+            const elem = this.rendered[component['id']];
+            component['component']['update'](elem, position);
+          }
         }
       }
 

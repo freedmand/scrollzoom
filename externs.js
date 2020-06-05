@@ -1,1 +1,1 @@
-var scrollzoom;
+var ScrollZoom;

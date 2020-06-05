@@ -89,6 +89,7 @@
         div.style.height = `${height}px`;
       },
       destroy() {
+        console.log("DESTROY PAGE", src)
       }
       }
     };
@@ -122,20 +123,16 @@
     canvas.height = HEIGHT;
     canvas.style.width = `${WIDTH / 4}px`;
     canvas.style.height = `${HEIGHT / 4}px`;
-    new scrollzoom(document.getElementById('doc'), {
+    const scrollzoom = new ScrollZoom(document.getElementById('doc'), {
       debugCanvas: canvas,
       components: [
       {
-          x: 20, y: 20, width: 1392 / 2, height: 272 / 2,
+          x: 0, y: 40, width: WIDTH, height: 272 / 1.5,
           component: page1
         },
         {
-          x: 30, y: 280, width: 1068 / 2, height: 576 / 2,
+          x: 0, y: 280, width: WIDTH, height: 576 / 1.2,
           component: page2
-        },
-        {
-          x: 0, y: 0, width: WIDTH, height: HEIGHT,
-          component: bounds
         },
       ],
       width: WIDTH,
@@ -143,6 +140,12 @@
       minZoom: 0.5,
       maxZoom: 20,
     });
+
+    window.addEventListener('keypress', (e) => {
+      if (e.key == 'A') {
+        scrollzoom.destroy();
+      }
+    })
   </script>
 </body>
 </html>
