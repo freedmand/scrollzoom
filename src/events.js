@@ -22,7 +22,7 @@ export class Events {
     this.containerWidth = containerBounds[0];
     this.containerHeight = containerBounds[1];
     // Set transform bounds
-    this.transform.bounds = [[this.bounds.width, this.bounds.height], [this.containerWidth, this.containerHeight]];
+    this.updateBounds();
 
     this.matrixInitiatedScroll = false;
 
@@ -68,6 +68,18 @@ export class Events {
     });
 
     this.updateTransformPositions();
+  }
+
+  updateBounds() {
+    this.transform.bounds = [[this.bounds.width, this.bounds.height], [this.containerWidth, this.containerHeight]];
+  }
+
+  destroy() {
+    this.events.forEach(event => {
+      event[0].forEach(eventType => {
+        this.element.removeEventListener(eventType, event[1], { passive: false });
+      })
+    });
   }
 
   transformCallback() {
@@ -118,13 +130,6 @@ export class Events {
         // TODO: implement
         // zoomToScene([x, y]);
       } else {
-        const topLeft = this.transform.project([0, 0]);
-        const bottomRight = this.transform.project([this.containerWidth, this.containerHeight]);
-        const width = bottomRight[0] - topLeft[0];
-        if (width < this.bounds.width) {
-          // Lock to center
-          x = this.bounds.width / 2;
-        }
         this.transform.scale(x, y, Math.exp(deltaY * ZOOM_INTENSITY));
       }
     }

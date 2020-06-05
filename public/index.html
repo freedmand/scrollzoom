@@ -70,15 +70,16 @@
 
   <script src="./bundle.js"></script>
   <script>
-    const page1 = {
-      render({x, y, width, height}) {
+    const page = src => {
+      return {
+        render({x, y, width, height}) {
         const div = document.createElement('img');
         div.className = 'page';
         div.style.left = `${x}px`;
         div.style.top = `${y}px`;
         div.style.width = `${width}px`;
         div.style.height = `${height}px`;
-        div.src = 'img/page1.png';
+        div.src = src;
         return div;
       },
       update(div, {x, y, width, height}) {
@@ -88,29 +89,12 @@
         div.style.height = `${height}px`;
       },
       destroy() {
+      }
       }
     };
 
-    const page2 = {
-      render({x, y, width, height}) {
-        const div = document.createElement('img');
-        div.className = 'page';
-        div.style.left = `${x}px`;
-        div.style.top = `${y}px`;
-        div.style.width = `${width}px`;
-        div.style.height = `${height}px`;
-        div.src = 'img/page2.png';
-        return div;
-      },
-      update(div, {x, y, width, height}) {
-        div.style.left = `${x}px`;
-        div.style.top = `${y}px`;
-        div.style.width = `${width}px`;
-        div.style.height = `${height}px`;
-      },
-      destroy() {
-      }
-    };
+    const page1 = page('img/page1.png');
+    const page2 = page('img/page2.png');
 
     const bounds = {
       render({x, y, width, height}) {
@@ -138,7 +122,7 @@
     canvas.height = HEIGHT;
     canvas.style.width = `${WIDTH / 4}px`;
     canvas.style.height = `${HEIGHT / 4}px`;
-    scrollzoom(document.getElementById('doc'), {
+    new scrollzoom(document.getElementById('doc'), {
       debugCanvas: canvas,
       components: [
       {

@@ -1,14 +1,769 @@
-'use strict';var v=this;
-function w(){function D(a){let b=!0;return()=>{b?b=!1:a()}}function x(a){let b=null;return(...c)=>{null!=b&&(cancelAnimationFrame(b),b=null);b=requestAnimationFrame(()=>{b=null;a(...c)})}}function E(a,b){let c=["resize",x(b)];window.addEventListener(...c);return()=>window.removeEventListener(...c)}function F(a,b){let c=new ResizeObserver(D(x(b)));c.observe(a);return()=>c.disconnect()}function G(a,b){return null!=window.ResizeObserver?F(a,b):E(a,b)}function y(){var a=new u(6);u!=Float32Array&&(a[1]=
-0,a[2]=0,a[4]=0,a[5]=0);a[0]=1;a[3]=1;return a}function z(a,b,c){var d=b[1],e=b[2],f=b[3],h=b[4],n=b[5],m=c[0];c=c[1];a[0]=b[0]*m;a[1]=d*m;a[2]=e*c;a[3]=f*c;a[4]=h;a[5]=n;return a}function t(a,b,c){var d=b[0],e=b[1],f=b[2],h=b[3],n=b[4];b=b[5];var m=c[0];c=c[1];a[0]=d;a[1]=e;a[2]=f;a[3]=h;a[4]=d*m+f*c+n;a[5]=e*m+h*c+b;return a}function H(){var a=new u(2);u!=Float32Array&&(a[0]=0,a[1]=0);return a}function A(a,b,c){var d=b[0];b=b[1];a[0]=c[0]*d+c[2]*b+c[4];a[1]=c[1]*d+c[3]*b+c[5];return a}function r(a,
-b,c=1E-6){return Math.abs(a-b)<c}function B(a,b){var c=a.pageX;a=a.pageY;var d=b.offsetLeft,e=b.offsetTop;for(b=b.offsetParent;b;)d+=b.offsetLeft,e+=b.offsetTop,b=b.offsetParent;return{x:c-d,y:a-e}}class I{constructor(a,b,c=G){this.element=a;this.v=b;this.A(!0);c(a,()=>this.A())}A(a=!1){this.width=this.element.offsetWidth;this.height=this.element.offsetHeight;a||null==this.v||this.v(this.width,this.height)}}var u="undefined"!==typeof Float32Array?Float32Array:Array;Math.hypot||(Math.hypot=function(){for(var a=
-0,b=arguments.length;b--;)a+=arguments[b]*arguments[b];return Math.sqrt(a)});(function(){var a=H();return function(b,c,d,e,f,h){c||(c=2);d||(d=0);for(e=e?Math.min(e*c+d,b.length):b.length;d<e;d+=c)a[0]=b[d],a[1]=b[d+1],f(a,a,h),b[d]=a[0],b[d+1]=a[1];return b}})();class J{constructor(a,b){this.a=y();this.o=null;this.s=b;this.viewport=a;this.w=!0;this.b=null}R(a){this.viewport=a}F(){if(null!=this.b){var a=0,b=0,[c,d]=this.h([0,0]),[e,f]=this.h(this.b[0]),h=this.b[1][0],n=this.b[1][1];e-c<h&&(0>c?a=
-c:e>h&&(a=e-h));f-d<n?0>d?b=d:f>n&&(b=f-n):b=d;r(a,0)&&r(b,0)||t(this.a,this.a,[a,b])}}B(a){this.a=a;this.F();null!=this.o&&this.w&&this.o();null!=this.s&&this.s()}f(a){let b=[0,0];A(b,a,this.a);return b}h(a){let b=[0,0],c=y();var d=this.a,e=d[0],f=d[1],h=d[2],n=d[3],m=d[4];d=d[5];var p=e*n-f*h;p&&(p=1/p,c[0]=n*p,c[1]=-f*p,c[2]=-h*p,c[3]=e*p,c[4]=(h*d-n*m)*p,c[5]=(f*m-e*d)*p);A(b,a,c);return b}scale(a,b,c){.2>this.a[0]*c?c=.2/this.a[0]:8<this.a[0]*c&&(c=8/this.a[0]);let [d,e]=this.h([a,b]);t(this.a,
-this.a,[d,e]);z(this.a,this.a,[c,c]);t(this.a,this.a,[-d,-e]);this.B(this.a)}I(a,b,c){let d=this.viewport.width,e=this.viewport.height;b=Math.min(d/b,e/c);c=y();t(c,c,[d/2,e/2]);z(c,c,[b,b]);t(c,c,[-a[0],-a[1]]);return c}H(a,b,c,d,e,f){c*=e;d*=f;this.B(this.I([a*e+c/2,b*f+d/2],c,d))}}class K{constructor(a,b,c,d,e){this.element=a;this.g=b;this.b=d;this.transform=e;this.u=1;this.C();this.j=c[0];this.i=c[1];this.transform.b=[[this.b.width,this.b.height],[this.j,this.i]];this.l=!1;this.G=[[["scroll"],
-()=>this.scroll()],[["wheel"],f=>this.S(f)],[["gesturestart"],()=>this.K()],[["gesturechange"],f=>this.J(f)],[["touchstart"],f=>this.O(f)],[["touchmove"],f=>this.N(f)],[["touchend"],f=>this.M(f)]];this.L=x((f,h,n,m)=>{this.c={left:n,top:m,width:f,height:h};r(f,this.g.offsetWidth)&&r(h,this.g.offsetHeight)||(this.g.style.width=`${f}px`,this.g.style.height=`${h}px`);r(n,this.element.scrollLeft)&&r(m,this.c.scrollTop)||(this.l=!0,this.element.scrollLeft=n,this.l=!0,this.element.scrollTop=m)});this.transform.o=
-()=>this.P();this.G.forEach(f=>{f[0].forEach(h=>{this.element.addEventListener(h,f[1],{passive:!1})})});this.D()}P(){let a=this.transform.f([0,0]),b=this.transform.f([this.j,this.i]);this.L(b[0]-a[0],b[1]-a[1],-a[0],-a[1])}scroll(){this.l?this.l=!1:(this.C(),this.D())}D(){let a=this.c.top/this.c.height,b=this.b.height/this.c.height,c=this.c.left/this.c.width,d=this.b.width/this.c.width;1<d&&(c-=(d-1)/2);this.transform.w=!1;this.transform.H(c,a,d,b,this.j,this.i);this.transform.w=!0}S(a){if(a.ctrlKey&&
-!this.m()){a.preventDefault();let {x:d,y:e}=B(a,this.element);var b=a.detail;a=15*-a.deltaY||a.wheelDelta||a.wheelDeltaY;var c;b=b?a&&(c=a/b)?b/c:-b/1.35:a/120;b=1>b?-1>b?(-Math.pow(b,2)-224)/225:b:(Math.pow(b,2)+224)/225;b=Math.min(Math.max(b/2,-1),1);0!=b&&(c=this.transform.f([0,0]),this.transform.f([this.j,this.i])[0]-c[0]<this.b.width&&(d=this.b.width/2),this.transform.scale(d,e,Math.exp(.15*b)))}}K(){this.u=1}J(a){if(!this.m()){var b=a.scale/this.u,{x:c,y:d}=B(a,this.element);this.transform.scale(c,
-d,b);this.u=a.scale}}m(){return null!=window.visualViewport&&1<window.visualViewport.scale}O(a){2<=a.touches.length&&!this.m()&&(a.stopImmediatePropagation(),a.preventDefault())}N(a){2<=a.touches.length&&!this.m()&&(a.stopImmediatePropagation(),a.preventDefault())}M(a){0==a.touches.length&&1==a.changedTouches.length&&a.preventDefault()}C(){this.c={left:this.element.scrollLeft,top:this.element.scrollTop,width:this.g.scrollWidth,height:this.g.scrollHeight}}}return function(a,b={}){let c=new I(a),d=
-0,e=(b.components||[]).map(l=>({...l,id:d++})),f={},h=b.width||500,n=b.height||500,m=document.createElement("div");m.style.width=`${h}px`;m.style.height=`${n}px`;m.style.position="relative";m.style.margin="0 auto";a.appendChild(m);let p=new J(c,()=>{for(var l=0;l<e.length;l++){var g=e[l],k=p.f([0,0]),q=p.f([g.x,g.y]);const C=p.f([g.x+g.width,g.y+g.height]);k={x:q[0]-k[0],y:q[1]-k[1],width:C[0]-q[0],height:C[1]-q[1]};null==f[g.id]?(k=g.component.render(k),f[g.id]=k,a.children[0].appendChild(k)):g.component.update(f[g.id],
-k)}l=b.debugCanvas;g=b.width;k=b.height;if(null!=l)for(l=l.getContext("2d"),l.clearRect(-g/.5,-k/.5,g/.5*2,k/.5*2),l.restore(),l.save(),l.scale(.5,.5),l.translate(.5*g,.5*k),g=p.h([0,0]),k=p.h([c.width,c.height]),l.strokeRect(g[0],g[1],k[0]-g[0],k[1]-g[1]),l.fillStyle="rgba(0, 0, 0, 0.02)",l.strokeRect(g[0],g[1],k[0]-g[0],k[1]-g[1]),g=0;g<e.length;g++)q=e[g],k=[q.x,q.y],q=[q.x+q.width,q.y+q.height],l.fillStyle="rgba(0, 0, 0, 0.08)",l.fillRect(k[0],k[1],q[0]-k[0],q[1]-k[1])});p.s();new K(a,m,[h,n],
-c,p);c.v=l=>p.R(l)}}"object"===typeof exports&&"undefined"!==typeof module?module.exports=w():"function"===typeof define&&define.T?define(w):(v=v||self,v.scrollzoom=w())
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(window.document);
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.scrollzoom = factory());
+}(this, (function () { 'use strict';
+
+  // Utilities to wrap functions with additional functionality
+
+  function ignoreFirst(closure) {
+    // Ignore first invocation of a function
+    let first = true;
+    return () => {
+      if (first) {
+        first = false;
+      } else {
+        closure();
+      }
+    }
+  }
+
+  function smoothify(fn) {
+    // Make function call back when CPU is idle
+    let timer = null;
+
+    return ((...args) => {
+      if (timer != null) {
+        cancelAnimationFrame(timer);
+        timer = null;
+      }
+
+      timer = requestAnimationFrame(() => {
+        timer = null;
+        fn(...args);
+      });
+    });
+  }
+
+  function windowObserver(_, callback) {
+    const event = ['resize', smoothify(callback)];
+    window.addEventListener(...event);
+    return () => window.removeEventListener(...event);
+  }
+
+  function resizeObserver(element, callback) {
+    const observer = new ResizeObserver(ignoreFirst(smoothify(callback)));
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }
+
+  function defaultObserver(element, callback) {
+    if (window.ResizeObserver != null) {
+      return resizeObserver(element, callback);
+    } else {
+      return windowObserver(element, callback);
+    }
+  }
+
+  class Bounds {
+    constructor(element, resizeCallback, resizeMethod = defaultObserver) {
+      this.element = element;
+      this.resizeCallback = resizeCallback;
+      this.updateDimensions(true);
+
+      this.cleanup = resizeMethod(element, () => this.updateDimensions());
+    }
+
+    destroy() {
+      if (this.cleanup != null) this.cleanup();
+    }
+
+    updateDimensions(init = false) {
+      this.width = this.element.offsetWidth;
+      this.height = this.element.offsetHeight;
+      if (!init && this.resizeCallback != null) this.resizeCallback(this.width, this.height);
+    }
+  }
+
+  /**
+   * Common utilities
+   * @module glMatrix
+   */
+  var ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array;
+  if (!Math.hypot) Math.hypot = function () {
+    var y = 0,
+        i = arguments.length;
+
+    while (i--) {
+      y += arguments[i] * arguments[i];
+    }
+
+    return Math.sqrt(y);
+  };
+
+  /**
+   * 2x3 Matrix
+   * @module mat2d
+   * @description
+   * A mat2d contains six elements defined as:
+   * <pre>
+   * [a, b,
+   *  c, d,
+   *  tx, ty]
+   * </pre>
+   * This is a short form for the 3x3 matrix:
+   * <pre>
+   * [a, b, 0,
+   *  c, d, 0,
+   *  tx, ty, 1]
+   * </pre>
+   * The last column is ignored so the array is shorter and operations are faster.
+   */
+
+  /**
+   * Creates a new identity mat2d
+   *
+   * @returns {mat2d} a new 2x3 matrix
+   */
+
+  function create() {
+    var out = new ARRAY_TYPE(6);
+
+    if (ARRAY_TYPE != Float32Array) {
+      out[1] = 0;
+      out[2] = 0;
+      out[4] = 0;
+      out[5] = 0;
+    }
+
+    out[0] = 1;
+    out[3] = 1;
+    return out;
+  }
+  /**
+   * Inverts a mat2d
+   *
+   * @param {mat2d} out the receiving matrix
+   * @param {ReadonlyMat2d} a the source matrix
+   * @returns {mat2d} out
+   */
+
+  function invert(out, a) {
+    var aa = a[0],
+        ab = a[1],
+        ac = a[2],
+        ad = a[3];
+    var atx = a[4],
+        aty = a[5];
+    var det = aa * ad - ab * ac;
+
+    if (!det) {
+      return null;
+    }
+
+    det = 1.0 / det;
+    out[0] = ad * det;
+    out[1] = -ab * det;
+    out[2] = -ac * det;
+    out[3] = aa * det;
+    out[4] = (ac * aty - ad * atx) * det;
+    out[5] = (ab * atx - aa * aty) * det;
+    return out;
+  }
+  /**
+   * Scales the mat2d by the dimensions in the given vec2
+   *
+   * @param {mat2d} out the receiving matrix
+   * @param {ReadonlyMat2d} a the matrix to translate
+   * @param {ReadonlyVec2} v the vec2 to scale the matrix by
+   * @returns {mat2d} out
+   **/
+
+  function scale(out, a, v) {
+    var a0 = a[0],
+        a1 = a[1],
+        a2 = a[2],
+        a3 = a[3],
+        a4 = a[4],
+        a5 = a[5];
+    var v0 = v[0],
+        v1 = v[1];
+    out[0] = a0 * v0;
+    out[1] = a1 * v0;
+    out[2] = a2 * v1;
+    out[3] = a3 * v1;
+    out[4] = a4;
+    out[5] = a5;
+    return out;
+  }
+  /**
+   * Translates the mat2d by the dimensions in the given vec2
+   *
+   * @param {mat2d} out the receiving matrix
+   * @param {ReadonlyMat2d} a the matrix to translate
+   * @param {ReadonlyVec2} v the vec2 to translate the matrix by
+   * @returns {mat2d} out
+   **/
+
+  function translate(out, a, v) {
+    var a0 = a[0],
+        a1 = a[1],
+        a2 = a[2],
+        a3 = a[3],
+        a4 = a[4],
+        a5 = a[5];
+    var v0 = v[0],
+        v1 = v[1];
+    out[0] = a0;
+    out[1] = a1;
+    out[2] = a2;
+    out[3] = a3;
+    out[4] = a0 * v0 + a2 * v1 + a4;
+    out[5] = a1 * v0 + a3 * v1 + a5;
+    return out;
+  }
+
+  /**
+   * 2 Dimensional Vector
+   * @module vec2
+   */
+
+  /**
+   * Creates a new, empty vec2
+   *
+   * @returns {vec2} a new 2D vector
+   */
+
+  function create$1() {
+    var out = new ARRAY_TYPE(2);
+
+    if (ARRAY_TYPE != Float32Array) {
+      out[0] = 0;
+      out[1] = 0;
+    }
+
+    return out;
+  }
+  /**
+   * Transforms the vec2 with a mat2d
+   *
+   * @param {vec2} out the receiving vector
+   * @param {ReadonlyVec2} a the vector to transform
+   * @param {ReadonlyMat2d} m matrix to transform with
+   * @returns {vec2} out
+   */
+
+  function transformMat2d(out, a, m) {
+    var x = a[0],
+        y = a[1];
+    out[0] = m[0] * x + m[2] * y + m[4];
+    out[1] = m[1] * x + m[3] * y + m[5];
+    return out;
+  }
+  /**
+   * Perform some operation over an array of vec2s.
+   *
+   * @param {Array} a the array of vectors to iterate over
+   * @param {Number} stride Number of elements between the start of each vec2. If 0 assumes tightly packed
+   * @param {Number} offset Number of elements to skip at the beginning of the array
+   * @param {Number} count Number of vec2s to iterate over. If 0 iterates over entire array
+   * @param {Function} fn Function to call for each vector in the array
+   * @param {Object} [arg] additional argument to pass to fn
+   * @returns {Array} a
+   * @function
+   */
+
+  var forEach = function () {
+    var vec = create$1();
+    return function (a, stride, offset, count, fn, arg) {
+      var i, l;
+
+      if (!stride) {
+        stride = 2;
+      }
+
+      if (!offset) {
+        offset = 0;
+      }
+
+      if (count) {
+        l = Math.min(count * stride + offset, a.length);
+      } else {
+        l = a.length;
+      }
+
+      for (i = offset; i < l; i += stride) {
+        vec[0] = a[i];
+        vec[1] = a[i + 1];
+        fn(vec, vec, arg);
+        a[i] = vec[0];
+        a[i + 1] = vec[1];
+      }
+
+      return a;
+    };
+  }();
+
+  function closeEnough(x, y, epsilon = 0.000001) {
+    return Math.abs(x - y) < epsilon;
+  }
+
+  // TODO: refactor as parameters
+  const MAX_ZOOM = 8; // 8x
+  const MIN_ZOOM = 1 / 5;
+
+  class Transform {
+    constructor(bounds, domCallback) {
+      this.matrix = create();
+      this.callback = null;
+      this.domCallback = domCallback;
+      this.viewport = [bounds.width, bounds.height];
+      this.runCallback = true;
+      this.bounds = null;
+    }
+
+    updateBounds(bounds) {
+      this.viewport = bounds;
+    }
+
+    ensureBounds() {
+      if (this.bounds == null) return;
+
+      let dx = 0;
+      let dy = 0;
+
+      const [x1, y1] = this.unproject([0, 0]);
+      const [x2, y2] = this.unproject(this.bounds[0]);
+      const width = x2 - x1;
+      const boundsWidth = this.bounds[1][0];
+      const height = y2 - y1;
+      const boundsHeight = this.bounds[1][1];
+
+      if (width < boundsWidth) {
+        if (x1 < 0) {
+          dx = x1;
+        } else if (x2 > boundsWidth) {
+          dx = x2 - boundsWidth;
+        }
+      } else {
+        // Ensure center
+        const currentCenter = x1 + (x2 - x1) / 2;
+        const desiredCenter = boundsWidth / 2;
+        dx = currentCenter - desiredCenter;
+      }
+
+      if (height < boundsHeight) {
+        if (y1 < 0) {
+          // Stay on top of page if zoomed out too far
+          dy = y1;
+        } else if (y2 > boundsHeight) {
+          dy = y2 - boundsHeight;
+        }
+      } else {
+        // Pin to top when zoomed out
+        dy = y1;
+      }
+
+      if (!closeEnough(dx, 0) || !closeEnough(dy, 0)) {
+        translate(this.matrix, this.matrix, [dx, dy]);
+      }
+    }
+
+    updateMatrix(matrix) {
+      this.matrix = matrix;
+      this.ensureBounds();
+      if (this.callback != null && this.runCallback) this.callback();
+      if (this.domCallback != null) this.domCallback();
+    }
+
+    project(point) {
+      const result = [0, 0];
+      transformMat2d(result, point, this.matrix);
+      return result;
+    }
+
+    unproject(point) {
+      const result = [0, 0];
+      const inverted = create();
+      invert(inverted, this.matrix);
+      transformMat2d(result, point, inverted);
+      return result;
+    }
+
+    scale(cx, cy, factor) {
+      if (this.matrix[0] * factor < MIN_ZOOM) {
+        factor = MIN_ZOOM / this.matrix[0];
+      } else if (this.matrix[0] * factor > MAX_ZOOM) {
+        factor = MAX_ZOOM / this.matrix[0];
+      }
+
+      const [dx, dy] = this.unproject([cx, cy]);
+      translate(this.matrix, this.matrix, [dx, dy]);
+      scale(this.matrix, this.matrix, [factor, factor]);
+      translate(this.matrix, this.matrix, [-dx, -dy]);
+      this.updateMatrix(this.matrix);
+    }
+
+    fitTransform(centerPoint, width, height) {
+      // Return a matrix that encompasses the desired center point and encompasses the width/height
+      const vw = this.viewport[0];
+      const vh = this.viewport[1];
+      const scaleFactor = Math.min(vw / width, vh / height);
+      const matrix = create();
+      translate(matrix, matrix, [vw / 2, vh / 2]);
+      scale(matrix, matrix, [scaleFactor, scaleFactor]);
+      translate(matrix, matrix, [-centerPoint[0], -centerPoint[1]]);
+      return matrix;
+    }
+
+    fitPercents(leftPerc, topPerc, widthPerc, heightPerc, boundsWidth, boundsHeight) {
+      const x1 = leftPerc * boundsWidth;
+      const y1 = topPerc * boundsHeight;
+      const width = widthPerc * boundsWidth;
+      const height = heightPerc * boundsHeight;
+      this.updateMatrix(this.fitTransform([x1 + width / 2, y1 + height / 2], width, height));
+    }
+  }
+
+  // DOM utility functions
+
+  function getRelativeCoordinates(event, referenceElement) {
+    const position = {
+      x: event.pageX,
+      y: event.pageY
+    };
+
+    const offset = {
+      left: referenceElement.offsetLeft,
+      top: referenceElement.offsetTop
+    };
+
+    let reference = referenceElement.offsetParent;
+
+    while (reference) {
+      offset.left += reference.offsetLeft;
+      offset.top += reference.offsetTop;
+      reference = reference.offsetParent;
+    }
+
+    return {
+      x: position.x - offset.left,
+      y: position.y - offset.top
+    };
+  }
+
+  // Adapted from https://stackoverflow.com/a/13650579
+  // with custom touches
+
+  function normalizeScroll(e) {
+    var o = e,
+      d = o.detail, w = ((-o.deltaY * 15) || o.wheelDelta || o.wheelDeltaY),
+      n = 225, n1 = n - 1, f;
+
+
+    // Normalize delta
+    d = d ? w && (f = w / d) ? d / f : -d / 1.35 : w / 120;
+    // Quadratic scale if |d| > 1
+    d = d < 1 ? d < -1 ? (-Math.pow(d, 2) - n1) / n : d : (Math.pow(d, 2) + n1) / n;
+    // Delta *should* not be greater than 2...
+    return Math.min(Math.max(d / 2, -1), 1);
+  }
+
+  // Zoom sensitivity
+  const ZOOM_INTENSITY = 0.15;
+  // const DOUBLE_TAP_TIMEOUT = 300;
+
+  class Events {
+    constructor(element, container, containerBounds, bounds, transform) {
+      this.element = element;
+      this.container = container;
+      this.bounds = bounds;
+      this.transform = transform;
+      this.prevScale = 1;
+
+      this.updateScrollPositions();
+
+      // The transform bounds
+      // Only updated when internal contents are added
+      this.containerWidth = containerBounds[0];
+      this.containerHeight = containerBounds[1];
+      // Set transform bounds
+      this.updateBounds();
+
+      this.matrixInitiatedScroll = false;
+
+      this.events = [
+        [['scroll'], () => this.scroll()],
+        [['wheel'], (e) => this.wheel(e)],
+        [['gesturestart'], () => this.gesturestart()],
+        [['gesturechange'], (e) => this.gesturechange(e)],
+        [['touchstart'], (e) => this.touchstart(e)],
+        [['touchmove'], (e) => this.touchmove(e)],
+        [['touchend'], (e) => this.touchend(e)],
+      ];
+
+      // Smooth functions
+      this.setContainer = smoothify((width, height, left, top) => {
+        this.scrollPositions = {
+          left,
+          top,
+          width,
+          height
+        };
+
+        // Set width/height of scroll child
+        if (!closeEnough(width, this.container.offsetWidth) || !closeEnough(height, this.container.offsetHeight)) {
+          this.container.style.width = `${width}px`;
+          this.container.style.height = `${height}px`;
+        }
+
+        if (!closeEnough(left, this.element.scrollLeft) || !closeEnough(top, this.scrollPositions.scrollTop)) {
+          this.matrixInitiatedScroll = true;
+          this.element.scrollLeft = left;
+          this.matrixInitiatedScroll = true;
+          this.element.scrollTop = top;
+        }
+      });
+
+      this.transform.callback = () => this.transformCallback();
+
+      this.events.forEach(event => {
+        event[0].forEach(eventType => {
+          this.element.addEventListener(eventType, event[1], { passive: false });
+        });
+      });
+
+      this.updateTransformPositions();
+    }
+
+    updateBounds() {
+      this.transform.bounds = [[this.bounds.width, this.bounds.height], [this.containerWidth, this.containerHeight]];
+    }
+
+    destroy() {
+      this.events.forEach(event => {
+        event[0].forEach(eventType => {
+          this.element.removeEventListener(eventType, event[1], { passive: false });
+        });
+      });
+    }
+
+    transformCallback() {
+      // Set child height / width
+      const topLeft = this.transform.project([0, 0]);
+      const bottomRight = this.transform.project([this.containerWidth, this.containerHeight]);
+      const width = bottomRight[0] - topLeft[0];
+      const height = bottomRight[1] - topLeft[1];
+      this.setContainer(width, height, -topLeft[0], -topLeft[1]);
+    }
+
+    scroll() {
+      if (this.matrixInitiatedScroll) {
+        // Don't scroll handle if initiated by matrix
+        this.matrixInitiatedScroll = false;
+        return;
+      }
+
+      this.updateScrollPositions();
+      this.updateTransformPositions();
+    }
+
+    updateTransformPositions(runCallback = false) {
+      const topPerc = this.scrollPositions.top / this.scrollPositions.height;
+      const heightPerc = this.bounds.height / this.scrollPositions.height;
+      let leftPerc = this.scrollPositions.left / this.scrollPositions.width;
+      const widthPerc = this.bounds.width / this.scrollPositions.width;
+      if (widthPerc > 1) {
+        // Fix width percent to handle centeredness
+        leftPerc -= (widthPerc - 1) / 2;
+      }
+
+      if (!runCallback) this.transform.runCallback = false;
+      this.transform.fitPercents(leftPerc, topPerc, widthPerc, heightPerc, this.containerWidth, this.containerHeight);
+      if (!runCallback) this.transform.runCallback = true;
+    }
+
+    wheel(e) {
+      if (e.ctrlKey && !this.visualScaleCheck()) {
+        // Zoom
+        e.preventDefault();
+
+        let { x, y } = getRelativeCoordinates(e, this.element);
+        const deltaY = normalizeScroll(e);
+
+        if (deltaY == 0) ; else {
+          this.transform.scale(x, y, Math.exp(deltaY * ZOOM_INTENSITY));
+        }
+      }
+    }
+
+    gesturestart() {
+      this.prevScale = 1;
+    }
+
+    gesturechange(e) {
+      if (this.visualScaleCheck()) return;
+      const scale = e.scale / this.prevScale;
+      const { x, y } = getRelativeCoordinates(e, this.element);
+      this.transform.scale(x, y, scale);
+      this.prevScale = e.scale;
+    }
+
+    visualScaleCheck() {
+      return window.visualViewport != null && window.visualViewport.scale > 1;
+    }
+
+    touchstart(e) {
+      if (e.touches.length >= 2) {
+        if (this.visualScaleCheck()) {
+          return;
+        }
+
+        // Two finger gesture
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    }
+
+    touchmove(e) {
+      if (e.touches.length >= 2) {
+        // Two finger gesture
+        if (this.visualScaleCheck()) {
+          return;
+        }
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    }
+
+    touchend(e) {
+      // Adapted from https://stackoverflow.com/a/32761323
+
+      // Only trigger off of single touch events
+      if (e.touches.length != 0 || e.changedTouches.length != 1) return;
+
+      // TODO: implement
+      // if (!tappedTwice) {
+      //   tappedTwice = true;
+      //   setTimeout(() => tappedTwice = false, DOUBLE_TAP_TIMEOUT);
+      //   return false;
+      // }
+      e.preventDefault();
+
+      // TODO: Zoom to scene on double-tap
+      // const { x, y } = getRelativeCoordinates(e, workspaceElem);
+      // zoomToScene([x, y]);
+    }
+
+    updateScrollPositions() {
+      this.scrollPositions = {
+        left: this.element.scrollLeft,
+        top: this.element.scrollTop,
+        width: this.container.scrollWidth,
+        height: this.container.scrollHeight,
+      };
+    }
+  }
+
+  const DEFAULT_SIZE = 500;
+
+  class ScrollZoom {
+    constructor(element, options) {
+      this.element = element;
+      this.options = options;
+      this.bounds = new Bounds(this.element);
+
+      // Render components as transform changes
+      this.componentId = 0;
+      this.components = (this.options['components'] || []).map(x => {
+        return {
+          ...x,
+          id: this.componentId++
+        }
+      });
+
+      // Map of rendered elements
+      this.rendered = {};
+
+      this.containerWidth = this.options['width'] || DEFAULT_SIZE;
+      this.containerHeight = this.options['height'] || DEFAULT_SIZE;
+
+      // Create the internal container element
+      this.container = document.createElement('div');
+      this.container.style.width = `${this.containerWidth}px`;
+      this.container.style.height = `${this.containerHeight}px`;
+      this.container.style.position = 'relative';
+      // Centered horizontally
+      // TODO: refactor as a parameter
+      this.container.style.margin = '0 auto';
+      this.element.appendChild(this.container);
+
+      this.transform = new Transform(this.bounds, () => this.domCallback());
+      this.domCallback();
+
+      this.events = new Events(this.element, this.container, [this.containerWidth, this.containerHeight], this.bounds, this.transform);
+      this.bounds.resizeCallback = (w, h) => this.resizeBounds(w, h);
+    }
+
+    destroy() {
+      this.bounds.destroy();
+      this.events.destroy();
+    }
+
+    resizeBounds(w, h) {
+      this.transform.updateBounds([w, h]);
+      this.events.updateBounds();
+      this.transform.updateMatrix(this.transform.matrix);
+    }
+
+    domCallback() {
+      // Render the DOM
+      for (let i = 0; i < this.components.length; i++) {
+        const component = this.components[i];
+        const scrollOrigin = this.transform.project([0, 0]);
+        const topLeft = this.transform.project([component['x'], component['y']]);
+        const bottomRight = this.transform.project([component['x'] + component['width'], component['y'] + component['height']]);
+        const position = {
+          x: topLeft[0] - scrollOrigin[0],
+          y: topLeft[1] - scrollOrigin[1],
+          width: bottomRight[0] - topLeft[0],
+          height: bottomRight[1] - topLeft[1],
+        };
+
+        if (this.rendered[component['id']] == null) {
+          // Render
+          const elem = component['component']['render'](position);
+          this.rendered[component['id']] = elem;
+          this.element.children[0].appendChild(elem);
+        } else {
+          // Update
+          const elem = this.rendered[component['id']];
+          component['component']['update'](elem, position);
+        }
+      }
+
+      const canvas = this.options['debugCanvas'];
+      const width = this.options['width'];
+      const height = this.options['height'];
+      const SCALE = 0.5;
+      if (canvas != null) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(-width / SCALE, -height / SCALE, width / SCALE * 2, height / SCALE * 2);
+        ctx.restore();
+        ctx.save();
+        ctx.scale(SCALE, SCALE);
+        ctx.translate(width * (1 - SCALE), height * (1 - SCALE));
+
+        const topLeft = this.transform.unproject([0, 0]);
+        const bottomRight = this.transform.unproject([this.bounds.width, this.bounds.height]);
+        ctx.strokeRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+        ctx.strokeRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
+
+        for (let i = 0; i < this.components.length; i++) {
+          const component = this.components[i];
+          const topLeft = [component['x'], component['y']];
+          const bottomRight = [component['x'] + component['width'], component['y'] + component['height']];
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+          ctx.fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
+        }
+      }
+    }
+  }
+
+  return ScrollZoom;
+
+})));

@@ -10,7 +10,7 @@ export class Transform {
     this.matrix = mat2d.create();
     this.callback = null;
     this.domCallback = domCallback;
-    this.viewport = bounds;
+    this.viewport = [bounds.width, bounds.height];
     this.runCallback = true;
     this.bounds = null;
   }
@@ -38,6 +38,11 @@ export class Transform {
       } else if (x2 > boundsWidth) {
         dx = x2 - boundsWidth;
       }
+    } else {
+      // Ensure center
+      const currentCenter = x1 + (x2 - x1) / 2;
+      const desiredCenter = boundsWidth / 2;
+      dx = currentCenter - desiredCenter;
     }
 
     if (height < boundsHeight) {
@@ -94,8 +99,8 @@ export class Transform {
 
   fitTransform(centerPoint, width, height) {
     // Return a matrix that encompasses the desired center point and encompasses the width/height
-    const vw = this.viewport.width;
-    const vh = this.viewport.height;
+    const vw = this.viewport[0];
+    const vh = this.viewport[1];
     const scaleFactor = Math.min(vw / width, vh / height);
     const matrix = mat2d.create();
     mat2d.translate(matrix, matrix, [vw / 2, vh / 2]);

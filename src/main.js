@@ -4,34 +4,62 @@ import { Events } from "./events";
 
 const DEFAULT_SIZE = 500;
 
-export default function scrollzoom(element, options = {}) {
-  const bounds = new Bounds(element);
+export default class ScrollZoom {
+  constructor(element, options) {
+    this.element = element;
+    this.options = options;
+    this.bounds = new Bounds(this.element);
 
-  // Render components as transform changes
-  let componentId = 0;
-  const components = (options['components'] || []).map(x => {
-    return {
-      ...x,
-      id: componentId++
-    }
-  });
-  const rendered = {};
+    // Render components as transform changes
+    this.componentId = 0;
+    this.components = (this.options['components'] || []).map(x => {
+      return {
+        ...x,
+        id: this.componentId++
+      }
+    });
 
-  const width = options['width'] || DEFAULT_SIZE;
-  const height = options['height'] || DEFAULT_SIZE;
-  const container = document.createElement('div');
-  container.style.width = `${width}px`;
-  container.style.height = `${height}px`;
-  container.style.position = 'relative';
-  container.style.margin = '0 auto';
-  element.appendChild(container);
+    // Map of rendered elements
+    this.rendered = {};
 
-  const transform = new Transform(bounds, () => {
-    for (let i = 0; i < components.length; i++) {
-      const component = components[i];
-      const scrollOrigin = transform.project([0, 0]);
-      const topLeft = transform.project([component['x'], component['y']]);
-      const bottomRight = transform.project([component['x'] + component['width'], component['y'] + component['height']]);
+    this.containerWidth = this.options['width'] || DEFAULT_SIZE;
+    this.containerHeight = this.options['height'] || DEFAULT_SIZE;
+
+    // Create the internal container element
+    this.container = document.createElement('div');
+    this.container.style.width = `${this.containerWidth}px`;
+    this.container.style.height = `${this.containerHeight}px`;
+    this.container.style.position = 'relative';
+    // Centered horizontally
+    // TODO: refactor as a parameter
+    this.container.style.margin = '0 auto';
+    this.element.appendChild(this.container);
+
+    this.transform = new Transform(this.bounds, () => this.domCallback());
+    this.domCallback();
+
+    this.events = new Events(this.element, this.container, [this.containerWidth, this.containerHeight], this.bounds, this.transform);
+    this.bounds.resizeCallback = (w, h) => this.resizeBounds(w, h);
+  }
+
+  destroy() {
+    this.bounds.destroy();
+    this.events.destroy();
+  }
+
+  resizeBounds(w, h) {
+    this.transform.updateBounds([w, h]);
+    this.events.updateBounds();
+    this.transform.updateMatrix(this.transform.matrix);
+  }
+
+  domCallback() {
+    // Render the DOM
+    for (let i = 0; i < this.components.length; i++) {
+      const component = this.components[i];
+      const scrollOrigin = this.transform.project([0, 0]);
+      const topLeft = this.transform.project([component['x'], component['y']]);
+      const bottomRight = this.transform.project([component['x'] + component['width'], component['y'] + component['height']]);
       const position = {
         x: topLeft[0] - scrollOrigin[0],
         y: topLeft[1] - scrollOrigin[1],
@@ -39,21 +67,21 @@ export default function scrollzoom(element, options = {}) {
         height: bottomRight[1] - topLeft[1],
       };
 
-      if (rendered[component['id']] == null) {
+      if (this.rendered[component['id']] == null) {
         // Render
         const elem = component['component']['render'](position);
-        rendered[component['id']] = elem;
-        element.children[0].appendChild(elem);
+        this.rendered[component['id']] = elem;
+        this.element.children[0].appendChild(elem);
       } else {
         // Update
-        const elem = rendered[component['id']];
+        const elem = this.rendered[component['id']];
         component['component']['update'](elem, position);
       }
     }
 
-    const canvas = options['debugCanvas'];
-    const width = options['width'];
-    const height = options['height'];
+    const canvas = this.options['debugCanvas'];
+    const width = this.options['width'];
+    const height = this.options['height'];
     const SCALE = 0.5;
     if (canvas != null) {
       const ctx = canvas.getContext('2d');
@@ -63,24 +91,19 @@ export default function scrollzoom(element, options = {}) {
       ctx.scale(SCALE, SCALE);
       ctx.translate(width * (1 - SCALE), height * (1 - SCALE));
 
-      const topLeft = transform.unproject([0, 0]);
-      const bottomRight = transform.unproject([bounds.width, bounds.height]);
+      const topLeft = this.transform.unproject([0, 0]);
+      const bottomRight = this.transform.unproject([this.bounds.width, this.bounds.height]);
       ctx.strokeRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
       ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
       ctx.strokeRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
 
-      for (let i = 0; i < components.length; i++) {
-        const component = components[i];
+      for (let i = 0; i < this.components.length; i++) {
+        const component = this.components[i];
         const topLeft = [component['x'], component['y']];
         const bottomRight = [component['x'] + component['width'], component['y'] + component['height']];
         ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'
         ctx.fillRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
       }
     }
-  });
-  transform.domCallback();
-
-  const events = new Events(element, container, [width, height], bounds, transform);
-  bounds.resizeCallback = (w, h) => transform.updateBounds(w, h);
-
+  }
 }
