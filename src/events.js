@@ -1,10 +1,11 @@
 import { smoothify } from './closure';
 import { closeEnough, clamp } from './math';
 import { getRelativeCoordinates } from './dom';
+import { normalizeScroll } from './normalizeScroll';
 
 // Zoom sensitivity
-const ZOOM_INTENSITY = 0.007;
-const DOUBLE_TAP_TIMEOUT = 300;
+const ZOOM_INTENSITY = 0.15;
+// const DOUBLE_TAP_TIMEOUT = 300;
 
 export class Events {
   constructor(element, container, containerBounds, bounds, transform) {
@@ -12,6 +13,7 @@ export class Events {
     this.container = container;
     this.bounds = bounds;
     this.transform = transform;
+    this.prevScale = 1;
 
     this.updateScrollPositions();
 
@@ -19,14 +21,19 @@ export class Events {
     // Only updated when internal contents are added
     this.containerWidth = containerBounds[0];
     this.containerHeight = containerBounds[1];
-    this.transform.bounds = [this.containerWidth, this.containerHeight];
+    // Set transform bounds
+    this.transform.bounds = [[this.bounds.width, this.bounds.height], [this.containerWidth, this.containerHeight]];
 
     this.matrixInitiatedScroll = false;
-    this.scrollInitiated = false;
 
     this.events = [
       [['scroll'], () => this.scroll()],
-      [['wheel'], (e) => this.wheel(e)]
+      [['wheel'], (e) => this.wheel(e)],
+      [['gesturestart'], () => this.gesturestart()],
+      [['gesturechange'], (e) => this.gesturechange(e)],
+      [['touchstart'], (e) => this.touchstart(e)],
+      [['touchmove'], (e) => this.touchmove(e)],
+      [['touchend'], (e) => this.touchend(e)],
     ];
 
     // Smooth functions
@@ -59,6 +66,8 @@ export class Events {
         this.element.addEventListener(eventType, event[1], { passive: false });
       })
     });
+
+    this.updateTransformPositions();
   }
 
   transformCallback() {
@@ -67,8 +76,7 @@ export class Events {
     const bottomRight = this.transform.project([this.containerWidth, this.containerHeight]);
     const width = bottomRight[0] - topLeft[0];
     const height = bottomRight[1] - topLeft[1];
-    this.setContainer(width, height, -topLeft[0], -topLeft[1], this.scrollInitiatedTransform);
-    this.scrollInitiatedTransform = false;
+    this.setContainer(width, height, -topLeft[0], -topLeft[1]);
   }
 
   scroll() {
@@ -82,34 +90,102 @@ export class Events {
     this.updateTransformPositions();
   }
 
-  updateTransformPositions() {
+  updateTransformPositions(runCallback = false) {
     const topPerc = this.scrollPositions.top / this.scrollPositions.height;
     const heightPerc = this.bounds.height / this.scrollPositions.height;
-    const leftPerc = this.scrollPositions.left / this.scrollPositions.width;
+    let leftPerc = this.scrollPositions.left / this.scrollPositions.width;
     const widthPerc = this.bounds.width / this.scrollPositions.width;
+    if (widthPerc > 1) {
+      // Fix width percent to handle centeredness
+      leftPerc -= (widthPerc - 1) / 2;
+    }
 
-    this.transform.runCallback = false;
+    if (!runCallback) this.transform.runCallback = false;
     this.transform.fitPercents(leftPerc, topPerc, widthPerc, heightPerc, this.containerWidth, this.containerHeight);
-    this.transform.runCallback = true;
+    if (!runCallback) this.transform.runCallback = true;
   }
 
   wheel(e) {
-    if (e.ctrlKey) {
+    if (e.ctrlKey && !this.visualScaleCheck()) {
       // Zoom
       e.preventDefault();
 
       let { x, y } = getRelativeCoordinates(e, this.element);
-      // TODO: normalize
-      const { deltaX, deltaY } = e;
+      const deltaY = normalizeScroll(e);
 
-      if (deltaX == 0 && deltaY == 0) {
+      if (deltaY == 0) {
         // Zoom to scene
         // TODO: implement
         // zoomToScene([x, y]);
       } else {
-        this.transform.scale(x, y, Math.exp(-deltaY * ZOOM_INTENSITY));
+        const topLeft = this.transform.project([0, 0]);
+        const bottomRight = this.transform.project([this.containerWidth, this.containerHeight]);
+        const width = bottomRight[0] - topLeft[0];
+        if (width < this.bounds.width) {
+          // Lock to center
+          x = this.bounds.width / 2;
+        }
+        this.transform.scale(x, y, Math.exp(deltaY * ZOOM_INTENSITY));
       }
     }
+  }
+
+  gesturestart() {
+    this.prevScale = 1;
+  }
+
+  gesturechange(e) {
+    if (this.visualScaleCheck()) return;
+    const scale = e.scale / this.prevScale;
+    const { x, y } = getRelativeCoordinates(e, this.element);
+    this.transform.scale(x, y, scale);
+    this.prevScale = e.scale;
+  }
+
+  visualScaleCheck() {
+    return window.visualViewport != null && window.visualViewport.scale > 1;
+  }
+
+  touchstart(e) {
+    if (e.touches.length >= 2) {
+      if (this.visualScaleCheck()) {
+        return;
+      }
+
+      // Two finger gesture
+      e.stopImmediatePropagation()
+      e.preventDefault()
+    }
+  }
+
+  touchmove(e) {
+    if (e.touches.length >= 2) {
+      // Two finger gesture
+      if (this.visualScaleCheck()) {
+        return;
+      }
+      e.stopImmediatePropagation()
+      e.preventDefault()
+    }
+  }
+
+  touchend(e) {
+    // Adapted from https://stackoverflow.com/a/32761323
+
+    // Only trigger off of single touch events
+    if (e.touches.length != 0 || e.changedTouches.length != 1) return;
+
+    // TODO: implement
+    // if (!tappedTwice) {
+    //   tappedTwice = true;
+    //   setTimeout(() => tappedTwice = false, DOUBLE_TAP_TIMEOUT);
+    //   return false;
+    // }
+    e.preventDefault();
+
+    // TODO: Zoom to scene on double-tap
+    // const { x, y } = getRelativeCoordinates(e, workspaceElem);
+    // zoomToScene([x, y]);
   }
 
   updateScrollPositions() {

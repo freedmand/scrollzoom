@@ -20,41 +20,40 @@ export class Transform {
   }
 
   ensureBounds() {
-    return;
-    if (this.bounds != null) {
-      const viewportBounds = [...this.unproject(0, 0), ...this.unproject(this.bounds)];
-      const [x1, y1, x2, y2] = viewportBounds;
+    if (this.bounds == null) return;
 
-      let dx = 0;
-      let dy = 0;
+    let dx = 0;
+    let dy = 0;
 
-      if (x2 - x1 > this.bounds[0]) {
-        // Stay on top of page if zoomed out too far
+    const [x1, y1] = this.unproject([0, 0]);
+    const [x2, y2] = this.unproject(this.bounds[0]);
+    const width = x2 - x1;
+    const boundsWidth = this.bounds[1][0];
+    const height = y2 - y1;
+    const boundsHeight = this.bounds[1][1];
+
+    if (width < boundsWidth) {
+      if (x1 < 0) {
         dx = x1;
-      } else {
-        // Prevent panning past page bounds
-        if (x1 < 0) {
-          dx = x1 - 0;
-        } else if (x2 > this.bounds[0]) {
-          dx = x2 - this.bounds[0];
-        }
+      } else if (x2 > boundsWidth) {
+        dx = x2 - boundsWidth;
       }
+    }
 
-      if (y2 - y1 > this.bounds[1]) {
+    if (height < boundsHeight) {
+      if (y1 < 0) {
         // Stay on top of page if zoomed out too far
         dy = y1;
-      } else {
-        // Prevent panning past page bounds
-        if (y1 < 0) {
-          dy = y1 - 0;
-        } else if (y2 > this.bounds[1]) {
-          dy = y2 - this.bounds[1];
-        }
+      } else if (y2 > boundsHeight) {
+        dy = y2 - boundsHeight;
       }
+    } else {
+      // Pin to top when zoomed out
+      dy = y1;
+    }
 
-      if (!closeEnough(dx, 0) || !closeEnough(dy, 0)) {
-        mat2d.translate(this.matrix, this.matrix, [dx, dy]);
-      }
+    if (!closeEnough(dx, 0) || !closeEnough(dy, 0)) {
+      mat2d.translate(this.matrix, this.matrix, [dx, dy]);
     }
   }
 
@@ -91,7 +90,6 @@ export class Transform {
     mat2d.scale(this.matrix, this.matrix, [factor, factor]);
     mat2d.translate(this.matrix, this.matrix, [-dx, -dy]);
     this.updateMatrix(this.matrix);
-    // TODO: ensure bounds
   }
 
   fitTransform(centerPoint, width, height) {

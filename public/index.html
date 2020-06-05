@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ScrollZoom Demo</title>
 
   <style>
     canvas {
       background: rgb(246, 251, 255);
       margin-top: 20px;
+    }
+
+    body, html, :root {
+      touch-action: pan-x pan-y;
+      overscroll-behavior: none;
     }
 
     .doc {
@@ -18,6 +23,7 @@
       box-sizing: border-box;
       position: relative;
       overflow: scroll;
+      touch-action: manipulation;
     }
 
     .doc::-webkit-scrollbar {
@@ -49,6 +55,11 @@
       box-sizing: border-box;
       position: absolute;
     }
+
+    img {
+      border: solid 1px black;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
@@ -59,14 +70,36 @@
 
   <script src="./bundle.js"></script>
   <script>
-    const page = {
+    const page1 = {
       render({x, y, width, height}) {
-        const div = document.createElement('div');
+        const div = document.createElement('img');
         div.className = 'page';
         div.style.left = `${x}px`;
         div.style.top = `${y}px`;
         div.style.width = `${width}px`;
         div.style.height = `${height}px`;
+        div.src = 'img/page1.png';
+        return div;
+      },
+      update(div, {x, y, width, height}) {
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+      },
+      destroy() {
+      }
+    };
+
+    const page2 = {
+      render({x, y, width, height}) {
+        const div = document.createElement('img');
+        div.className = 'page';
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
+        div.src = 'img/page2.png';
         return div;
       },
       update(div, {x, y, width, height}) {
@@ -99,7 +132,7 @@
       }
     };
 
-    const WIDTH = 2000;
+    const WIDTH = 900;
     const HEIGHT = 800;
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
@@ -109,12 +142,12 @@
       debugCanvas: canvas,
       components: [
       {
-          x: 20, y: 20, width: 500, height: 500,
-          component: page
+          x: 20, y: 20, width: 1392 / 2, height: 272 / 2,
+          component: page1
         },
         {
-          x: 30, y: 540, width: 100, height: 150,
-          component: page
+          x: 30, y: 280, width: 1068 / 2, height: 576 / 2,
+          component: page2
         },
         {
           x: 0, y: 0, width: WIDTH, height: HEIGHT,

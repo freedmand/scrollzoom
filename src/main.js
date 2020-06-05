@@ -23,6 +23,7 @@ export default function scrollzoom(element, options = {}) {
   container.style.width = `${width}px`;
   container.style.height = `${height}px`;
   container.style.position = 'relative';
+  container.style.margin = '0 auto';
   element.appendChild(container);
 
   const transform = new Transform(bounds, () => {
@@ -42,7 +43,7 @@ export default function scrollzoom(element, options = {}) {
         // Render
         const elem = component['component']['render'](position);
         rendered[component['id']] = elem;
-        element.appendChild(elem);
+        element.children[0].appendChild(elem);
       } else {
         // Update
         const elem = rendered[component['id']];
@@ -53,9 +54,14 @@ export default function scrollzoom(element, options = {}) {
     const canvas = options['debugCanvas'];
     const width = options['width'];
     const height = options['height'];
+    const SCALE = 0.5;
     if (canvas != null) {
       const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(-width / SCALE, -height / SCALE, width / SCALE * 2, height / SCALE * 2);
+      ctx.restore();
+      ctx.save();
+      ctx.scale(SCALE, SCALE);
+      ctx.translate(width * (1 - SCALE), height * (1 - SCALE));
 
       const topLeft = transform.unproject([0, 0]);
       const bottomRight = transform.unproject([bounds.width, bounds.height]);
