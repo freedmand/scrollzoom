@@ -110,7 +110,7 @@ export default class ScrollZoom {
           // Render
           const elem = component['component']['render'](position);
           this.rendered[component['id']] = elem;
-          this.renderedComponents[component['id']] = elem;
+          this.renderedComponents[component['id']] = component;
           this.element.children[0].appendChild(elem);
           changed = true;
         } else {
