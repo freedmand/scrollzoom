@@ -21,6 +21,8 @@ export default class ScrollZoom {
 
     // Map of rendered elements
     this.rendered = {};
+    // Map of rendered components
+    this.renderedComponents = {};
 
     this.containerWidth = this.options['width'] || DEFAULT_SIZE;
     this.containerHeight = this.options['height'] || DEFAULT_SIZE;
@@ -70,6 +72,7 @@ export default class ScrollZoom {
       // Remove DOM node
       rendered.remove();
       delete this.rendered[id];
+      delete this.renderedComponents[id];
       return true;
     }
     return false;
@@ -107,6 +110,7 @@ export default class ScrollZoom {
           // Render
           const elem = component['component']['render'](position);
           this.rendered[component['id']] = elem;
+          this.renderedComponents[component['id']] = elem;
           this.element.children[0].appendChild(elem);
           changed = true;
         } else {

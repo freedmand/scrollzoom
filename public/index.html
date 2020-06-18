@@ -125,14 +125,15 @@
     canvas.style.height = `${HEIGHT / 4}px`;
     const scrollzoom = new ScrollZoom(document.getElementById('doc'), {
       debugCanvas: canvas,
+      changeCallback: () => console.log('change'),
       components: [
       {
           x: 0, y: 40, width: WIDTH, height: 272 / 1.5,
-          component: page1
+          component: page1, data: 'hi'
         },
         {
           x: 0, y: 280, width: WIDTH, height: 576 / 1.2,
-          component: page2
+          component: page2, data: 'hi2'
         },
       ],
       width: WIDTH,
