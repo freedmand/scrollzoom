@@ -24,6 +24,7 @@ export default class ScrollZoom {
 
     this.containerWidth = this.options['width'] || DEFAULT_SIZE;
     this.containerHeight = this.options['height'] || DEFAULT_SIZE;
+    this.changeCallback = this.options['changeCallback'];
 
     // Create the internal container element
     this.container = document.createElement('div');
@@ -69,11 +70,18 @@ export default class ScrollZoom {
       // Remove DOM node
       rendered.remove();
       delete this.rendered[id];
+      return true;
     }
+    return false;
+  }
+
+  triggerChange() {
+    if (this.changeCallback != null) this.changeCallback();
   }
 
   domCallback() {
     // Render the DOM
+    let changed = false;
     for (let i = 0; i < this.components.length; i++) {
       const component = this.components[i];
       const scrollOrigin = this.transform.project([0, 0]);
@@ -93,19 +101,25 @@ export default class ScrollZoom {
 
       if (hidden) {
         // Hide if already rendered
-        this.destroyComponent(component);
+        if (this.destroyComponent(component)) changed = true;
       } else {
         if (this.rendered[component['id']] == null) {
           // Render
           const elem = component['component']['render'](position);
           this.rendered[component['id']] = elem;
           this.element.children[0].appendChild(elem);
+          changed = true;
         } else {
           // Update
           const elem = this.rendered[component['id']];
           component['component']['update'](elem, position);
         }
       }
+    }
+
+    if (changed) {
+      // What is rendered has changed
+      this.triggerChange();
     }
 
     const canvas = this.options['debugCanvas'];
