@@ -67,6 +67,7 @@ export default class ScrollZoom {
     this.events.containerWidth = w;
     this.events.containerHeight = h;
     this.events.updateBounds();
+    this.events.transformCallback();
   }
 
   destroyComponent(component) {
