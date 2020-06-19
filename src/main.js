@@ -83,6 +83,9 @@ export default class ScrollZoom {
   }
 
   domCallback() {
+    this.container.style.width = `${this.containerWidth}px`;
+    this.container.style.height = `${this.containerHeight}px`;
+
     // Render the DOM
     let changed = false;
     for (let i = 0; i < this.components.length; i++) {
