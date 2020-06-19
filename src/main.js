@@ -61,6 +61,14 @@ export default class ScrollZoom {
     this.transform.updateMatrix(this.transform.matrix);
   }
 
+  resizeContainer(w, h) {
+    this.containerWidth = w;
+    this.containerHeight = h;
+    this.events.containerWidth = w;
+    this.events.containerHeight = h;
+    this.events.updateBounds();
+  }
+
   destroyComponent(component) {
     const id = component['id'];
     const rendered = this.rendered[id];
