@@ -99,6 +99,7 @@ export default class ScrollZoom {
       const scrollOrigin = this.transform.project([0, 0]);
       const topLeft = this.transform.project([component['x'], component['y']]);
       const bottomRight = this.transform.project([component['x'] + component['width'], component['y'] + component['height']]);
+      const scrollExtreme = this.transform.project([this.containerWidth, this.containerHeight]);
 
       // Visibility check
       const hidden = bottomRight[0] < 0 || topLeft[0] > this.bounds.width ||
@@ -109,6 +110,8 @@ export default class ScrollZoom {
         y: topLeft[1] - scrollOrigin[1],
         width: bottomRight[0] - topLeft[0],
         height: bottomRight[1] - topLeft[1],
+        docWidth: scrollExtreme[0] - scrollOrigin[0],
+        docHeight: scrollExtreme[1] - scrollOrigin[1],
       };
 
       if (hidden) {
