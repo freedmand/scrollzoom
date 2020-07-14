@@ -51,9 +51,11 @@ export class Events {
         this.container.style.height = `${height}px`;
       }
 
-      if (!closeEnough(left, this.element.scrollLeft) || !closeEnough(top, this.scrollPositions.scrollTop)) {
+      if (!closeEnough(left, this.element.scrollLeft)) {
         this.matrixInitiatedScroll = true;
         this.element.scrollLeft = left;
+      }
+      if (!closeEnough(top, this.scrollPositions.scrollTop)) {
         this.matrixInitiatedScroll = true;
         this.element.scrollTop = top;
       }
