@@ -13,6 +13,7 @@ export class Transform {
     this.viewport = [bounds.width, bounds.height];
     this.runCallback = true;
     this.bounds = null;
+    this.scaleOffset = [0, 0];
   }
 
   updateBounds(bounds) {
@@ -83,6 +84,10 @@ export class Transform {
     return result;
   }
 
+  setScaleOffset(dx, dy) {
+    this.scaleOffset = [dx, dy];
+  }
+
   scale(cx, cy, factor) {
     if (this.matrix[0] * factor < MIN_ZOOM) {
       factor = MIN_ZOOM / this.matrix[0];
@@ -90,7 +95,7 @@ export class Transform {
       factor = MAX_ZOOM / this.matrix[0];
     }
 
-    const [dx, dy] = this.unproject([cx, cy]);
+    const [dx, dy] = this.unproject([cx - this.scaleOffset[0], cy - this.scaleOffset[1]]);
     mat2d.translate(this.matrix, this.matrix, [dx, dy]);
     mat2d.scale(this.matrix, this.matrix, [factor, factor]);
     mat2d.translate(this.matrix, this.matrix, [-dx, -dy]);
