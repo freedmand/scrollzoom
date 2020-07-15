@@ -54,12 +54,10 @@ export class Events {
       if (!closeEnough(left, this.element.scrollLeft)) {
         this.matrixInitiatedScroll = true;
         this.element.scrollLeft = left;
-        this.matrixInitiatedScroll = false;
       }
       if (!closeEnough(top, this.scrollPositions.scrollTop)) {
         this.matrixInitiatedScroll = true;
         this.element.scrollTop = top;
-        this.matrixInitiatedScroll = false;
       }
     });
 
@@ -104,6 +102,11 @@ export class Events {
 
     this.updateScrollPositions();
     this.updateTransformPositions();
+  }
+
+  scrollTo(position) {
+    this.matrixInitiatedScroll = false;
+    this.element.scrollTop = position;
   }
 
   updateTransformPositions(runCallback = false) {
