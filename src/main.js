@@ -165,4 +165,8 @@ export default class ScrollZoom {
       }
     }
   }
+
+  scrollTo(position) {
+    this.events.scrollTo(position);
+  }
 }
