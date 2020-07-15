@@ -109,6 +109,10 @@ export class Events {
     this.element.scrollTop = position;
   }
 
+  scaleTo(scale) {
+    this.transform.scale(0, 0, scale / this.transform.matrix[0]);
+  }
+
   updateTransformPositions(runCallback = false) {
     const topPerc = this.scrollPositions.top / this.scrollPositions.height;
     const heightPerc = this.bounds.height / this.scrollPositions.height;
