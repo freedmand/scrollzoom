@@ -110,7 +110,7 @@ export class Events {
   }
 
   scaleTo(scale) {
-    this.transform.scale(0, 0, scale / this.transform.matrix[0]);
+    this.transform.scale(this.bounds.width / 2, 0, scale / this.transform.matrix[0]);
   }
 
   updateTransformPositions(runCallback = false) {
