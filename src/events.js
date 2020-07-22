@@ -5,7 +5,7 @@ import { normalizeScroll } from './normalizeScroll';
 
 // Zoom sensitivity
 const ZOOM_INTENSITY = 0.15;
-// const DOUBLE_TAP_TIMEOUT = 300;
+const DOUBLE_TAP_TIMEOUT = 300;
 
 export class Events {
   constructor(element, container, containerBounds, bounds, transform) {
@@ -14,6 +14,7 @@ export class Events {
     this.bounds = bounds;
     this.transform = transform;
     this.prevScale = 1;
+    this.tappedTwice = false;
 
     this.updateScrollPositions();
 
@@ -191,12 +192,11 @@ export class Events {
     // Only trigger off of single touch events
     if (e.touches.length != 0 || e.changedTouches.length != 1) return;
 
-    // TODO: implement
-    // if (!tappedTwice) {
-    //   tappedTwice = true;
-    //   setTimeout(() => tappedTwice = false, DOUBLE_TAP_TIMEOUT);
-    //   return false;
-    // }
+    if (!this.tappedTwice) {
+      this.tappedTwice = true;
+      setTimeout(() => this.tappedTwice = false, DOUBLE_TAP_TIMEOUT);
+      return false;
+    }
     e.preventDefault();
 
     // TODO: Zoom to scene on double-tap
