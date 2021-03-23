@@ -45,9 +45,9 @@ export class Events {
     this.events = [
       [['scroll'], () => this.scroll()],
       [['wheel'], (e) => this.wheel(e)],
-      [['gesturestart'], () => this.gesturestart(e)],
+      [['gesturestart'], () => this.gesturestart()],
       [['gesturechange'], (e) => this.gesturechange(e)],
-      [['gestureend'], (e) => this.gestureend()],
+      [['gestureend'], () => this.gestureend()],
       [['touchstart'], (e) => this.touchstart(e)],
       [['touchmove'], (e) => this.touchmove(e)],
       [['touchend'], (e) => this.touchend(e)],
@@ -169,7 +169,6 @@ export class Events {
   }
 
   gesturechange(e) {
-    this.blockTouchEvents = true;
     if (this.visualScaleCheck()) return;
     const scale = e.scale / this.prevScale;
     const { x, y } = getRelativeCoordinates(e, this.element);
