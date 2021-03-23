@@ -27,7 +27,8 @@ export class Events {
     this.bounds = bounds;
     this.transform = transform;
     this.prevScale = 1;
-    this.initScaleParams = null;
+    this.blockTouchEvents = false;  // gesture events override
+    this.prevTouchDistance = null;
     this.tappedTwice = false;
 
     this.updateScrollPositions();
@@ -44,8 +45,9 @@ export class Events {
     this.events = [
       [['scroll'], () => this.scroll()],
       [['wheel'], (e) => this.wheel(e)],
-      // [['gesturestart'], () => this.gesturestart()],
-      // [['gesturechange'], (e) => this.gesturechange(e)],
+      [['gesturestart'], () => this.gesturestart(e)],
+      [['gesturechange'], (e) => this.gesturechange(e)],
+      [['gestureend'], (e) => this.gestureend()],
       [['touchstart'], (e) => this.touchstart(e)],
       [['touchmove'], (e) => this.touchmove(e)],
       [['touchend'], (e) => this.touchend(e)],
@@ -162,6 +164,7 @@ export class Events {
   }
 
   gesturestart() {
+    this.blockTouchEvents = true;
     this.prevScale = 1;
   }
 
@@ -171,6 +174,10 @@ export class Events {
     const { x, y } = getRelativeCoordinates(e, this.element);
     this.transform.scale(x, y, scale);
     this.prevScale = e.scale;
+  }
+
+  gestureend() {
+    this.blockTouchEvents = false;
   }
 
   visualScaleCheck() {
@@ -189,11 +196,8 @@ export class Events {
 
       // Handle zooming
       if (e.touches.length == 2) {
-        this.prevScale = distance(e);
-        this.initScaleParams = {
-          dist: distance(e),
-          center: getRelativeCoordinates(center(e), this.element),
-        }
+        if (this.blockTouchEvents) return;
+        this.prevTouchDistance = distance(e);
       }
     }
   }
@@ -208,12 +212,13 @@ export class Events {
       e.preventDefault();
 
       // Handle zooming
-      if (this.initScaleParams != null && e.touches.length == 2) {
+      if (this.prevTouchDistance != null && e.touches.length == 2) {
+        if (this.blockTouchEvents) return;
         const dist = distance(e);
-        const scale = dist / this.prevScale;
+        const scale = dist / this.prevTouchDistance;
         const { x, y } = getRelativeCoordinates(center(e), this.element);
         this.transform.scale(x, y, scale);
-        this.prevScale = dist;
+        this.prevTouchDistance = dist;
       }
     }
   }
