@@ -209,7 +209,7 @@ export class Events {
 
       // Handle zooming
       if (this.initScaleParams != null && e.touches.length == 2) {
-        const scale = distance(e) / this.initScaleParams.dist / this.prevScale;
+        const scale = distance(e) / this.initScaleParams.dist;// / this.prevScale;
         const { x, y } = getRelativeCoordinates(center(e), this.element);
         this.transform.scale(x, y, scale);
         this.prevScale = scale;
