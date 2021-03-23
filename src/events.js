@@ -169,6 +169,7 @@ export class Events {
   }
 
   gesturechange(e) {
+    this.blockTouchEvents = true;
     if (this.visualScaleCheck()) return;
     const scale = e.scale / this.prevScale;
     const { x, y } = getRelativeCoordinates(e, this.element);
@@ -195,8 +196,7 @@ export class Events {
       e.preventDefault();
 
       // Handle zooming
-      if (e.touches.length == 2) {
-        if (this.blockTouchEvents) return;
+      if (!this.blockTouchEvents && e.touches.length == 2) {
         this.prevTouchDistance = distance(e);
       }
     }
@@ -212,8 +212,7 @@ export class Events {
       e.preventDefault();
 
       // Handle zooming
-      if (this.prevTouchDistance != null && e.touches.length == 2) {
-        if (this.blockTouchEvents) return;
+      if (!this.blockTouchEvents && this.prevTouchDistance != null && e.touches.length == 2) {
         const dist = distance(e);
         const scale = dist / this.prevTouchDistance;
         const { x, y } = getRelativeCoordinates(center(e), this.element);
