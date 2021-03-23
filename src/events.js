@@ -44,8 +44,8 @@ export class Events {
     this.events = [
       [['scroll'], () => this.scroll()],
       [['wheel'], (e) => this.wheel(e)],
-      [['gesturestart'], () => this.gesturestart()],
-      [['gesturechange'], (e) => this.gesturechange(e)],
+      // [['gesturestart'], () => this.gesturestart()],
+      // [['gesturechange'], (e) => this.gesturechange(e)],
       [['touchstart'], (e) => this.touchstart(e)],
       [['touchmove'], (e) => this.touchmove(e)],
       [['touchend'], (e) => this.touchend(e)],
@@ -209,8 +209,8 @@ export class Events {
 
       // Handle zooming
       if (this.initScaleParams != null && e.touches.length == 2) {
-        const scale = this.initScaleParams.dist / distance(e) / this.prevScale;
-        const { x, y } = this.initScaleParams.center;
+        const scale = distance(e) / this.initScaleParams.dist / this.prevScale;
+        const { x, y } = getRelativeCoordinates(center(e), this.element);
         this.transform.scale(x, y, scale);
         this.prevScale = scale;
       }
