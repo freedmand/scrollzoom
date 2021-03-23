@@ -8,8 +8,8 @@ const ZOOM_INTENSITY = 0.15;
 const DOUBLE_TAP_TIMEOUT = 300;
 
 function distance(pinchEvent) {
-  const dx = pinchEvent.touches[0].pageX - pinchEvent.touches[1].pageX;
-  const dy = pinchEvent.touches[0].pageY - pinchEvent.touches[1].pageY;
+  const dx = pinchEvent.touches[1].pageX - pinchEvent.touches[0].pageX;
+  const dy = pinchEvent.touches[1].pageY - pinchEvent.touches[0].pageY;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -189,7 +189,7 @@ export class Events {
 
       // Handle zooming
       if (e.touches.length == 2) {
-        this.prevScale = 1;
+        this.prevScale = distance(e);
         this.initScaleParams = {
           dist: distance(e),
           center: getRelativeCoordinates(center(e), this.element),
@@ -209,10 +209,11 @@ export class Events {
 
       // Handle zooming
       if (this.initScaleParams != null && e.touches.length == 2) {
-        const scale = distance(e) / this.initScaleParams.dist;// / this.prevScale;
+        const dist = distance(e);
+        const scale = dist / this.prevScale;
         const { x, y } = getRelativeCoordinates(center(e), this.element);
         this.transform.scale(x, y, scale);
-        this.prevScale = scale;
+        this.prevScale = dist;
       }
     }
   }
