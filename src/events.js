@@ -7,6 +7,19 @@ import { normalizeScroll } from './normalizeScroll';
 const ZOOM_INTENSITY = 0.15;
 const DOUBLE_TAP_TIMEOUT = 300;
 
+function distance(pinchEvent) {
+  const dx = pinchEvent.touches[0].pageX - pinchEvent.touches[1].pageX;
+  const dy = pinchEvent.touches[0].pageY - pinchEvent.touches[1].pageY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function center(pinchEvent) {
+  return {
+    pageX: (pinchEvent.touches[0].pageX + pinchEvent.touches[1].pageX) / 2,
+    pageY: (pinchEvent.touches[0].pageY + pinchEvent.touches[1].pageY) / 2,
+  };
+}
+
 export class Events {
   constructor(element, container, containerBounds, bounds, transform) {
     this.element = element;
@@ -14,6 +27,7 @@ export class Events {
     this.bounds = bounds;
     this.transform = transform;
     this.prevScale = 1;
+    this.initScaleParams = null;
     this.tappedTwice = false;
 
     this.updateScrollPositions();
@@ -171,7 +185,16 @@ export class Events {
 
       // Two finger gesture
       e.stopImmediatePropagation()
-      e.preventDefault()
+      e.preventDefault();
+
+      // Handle zooming
+      if (e.touches.length == 2) {
+        this.prevScale = 1;
+        this.initScaleParams = {
+          dist: distance(e),
+          center: getRelativeCoordinates(center(e), this.element),
+        }
+      }
     }
   }
 
@@ -181,8 +204,16 @@ export class Events {
       if (this.visualScaleCheck()) {
         return;
       }
-      e.stopImmediatePropagation()
-      e.preventDefault()
+      e.stopImmediatePropagation();
+      e.preventDefault();
+
+      // Handle zooming
+      if (this.initScaleParams != null && e.touches.length == 2) {
+        const scale = this.initScaleParams.dist / distance(e) / this.prevScale;
+        const { x, y } = this.initScaleParams.center;
+        this.transform.scale(x, y, scale);
+        this.prevScale = scale;
+      }
     }
   }
 
