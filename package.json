@@ -37,7 +37,7 @@
 		"jest": "^26.0.1",
 		"rollup": "^2.12.1",
 		"rollup-plugin-livereload": "^1.3.0",
-		"rollup-plugin-serve": "^1.0.1"
+		"rollup-plugin-serve": "^1.0.2"
 	},
 	"dependencies": {
 		"gl-matrix": "^3.3.0"
